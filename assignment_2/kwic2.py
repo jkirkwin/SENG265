@@ -13,6 +13,7 @@ import sys
 index_words = list()
 excluded = list()
 input_lines = list()
+input_lowercase = list()
 output_lines = list()
 
 # for debugging
@@ -40,17 +41,42 @@ def print_input():
 # Prints the fully indexed list of words with the formatting specified in 
 # a2_writeup.pdf
 def print_output():
+
     return
 
 
 # Fills the output_lines list with the indexed compliment of input_lines
 # according to the content of the lists of excluded and index words 
 def index():
+
+    for word in index_words:
+        for i in range(len(input_lines)):
+            
+            raw_line = input_lines[i]
+            lower_line = input_lowercase[i]
+            
+            low_li = lower_line.split()
+            raw_li = raw_line.split()
+
+            if word in low_li:
+                # capitalize index word
+                index = low_li.index(word)
+                
+                raw_li[index] = raw_li[index].upper()
+                
+                # package the indexed line with the value of the index
+                # which gives the index word when the string is split 
+                s = " ".join(raw_li)
+                output_lines.append((s, index))
+
     return
 
 
-# Records input line-by-line in a input_lines
+# Records input line-by-line in input_lines and a copy of that input in 
+# lowercase is stored in input_lowercase
+#
 # Fills and the list of excluded words
+#
 # Fills and sorts (lexicographically) the list of index words
 def get_input():
     version = input()
@@ -70,16 +96,17 @@ def get_input():
         elif flag:
             # non-empty input line
             input_lines.append(line)
+            input_lowercase.append(line.lower())
 
             # check each word against excluded words and previously added index words
             words = line.split()
             for w in words:
-                if w not in (excluded + index_words):
-                    index_words.append(w)  
+                if w.lower() not in (excluded + index_words):
+                    index_words.append(w.lower())  
 
         else:
             # still getting excluded words
-            excluded.append(line)
+            excluded.append(line.lower())
 
         index_words.sort()
 
@@ -88,13 +115,10 @@ def get_input():
 
 def main():
     get_input()
-    
-    #print_input()
-    print()
-    print_lines(index_words)
-    
     index()
     print_output()
+
+    print_lines(output_lines)
 
 if __name__ == '__main__':
     main()
