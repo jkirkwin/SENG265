@@ -72,6 +72,15 @@ def print_output():
         # pad to centre at column 30
         buffer = " "*(60 -len(buffer))  + buffer
 
+        # remove trailing spaces
+        trail = 0
+        for c in buffer[::-1]:
+            if c != " ":
+                break
+            trail = trail +1
+        buffer = buffer[:len(buffer) - trail]
+
+        print(len(buffer))
         print(buffer)
 
     return
