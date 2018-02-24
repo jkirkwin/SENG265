@@ -7,6 +7,9 @@
 # Feb 23, 2018
 # Intro to Python, indexing a text file by keyword with basic formatting
 
+import fileinput
+import sys
+
 index_words = list()
 excluded = list()
 input_lines = list()
@@ -25,16 +28,39 @@ def index():
 
 
 # Records input line-by-line in a input_lines
-# Fills and sorts the lists of excluded and index words 
+# Fills and the list of excluded words
+# Fills and sorts (lexicographically) the list of index words
 def get_input():
+    version = input()
+    seperator = input()
+
+    flag = False
+    for line in fileinput.input():
+        line = line.strip();
+        
+        if line == seperator: 
+            flag = True
+            continue
+        
+        elif line == '':
+            continue
+        
+        elif flag:
+            # getting input lines
+            x = 1
+        else:
+            # still getting excluded words
+            excluded.append(line)
+
     return
 
 
 def main():
     get_input()
+    print(excluded)
     index()
-    print_output()
 
+    print_output()
 
 if __name__ == '__main__':
     main()
