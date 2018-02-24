@@ -1,21 +1,16 @@
-#!/bin/usr/env python3
+#!//usr/bin/env python3
 
 # Jamie Kirkwin
 # Seng 265 Assignment 2
 # V00875987
 # kwic2.c
 # Feb 24, 2018
-# Intro to Python, indexing a text file by keyword with basic formatting
+# Intro to Python, indexing a text file by keyword with basic output formatting
 
 import fileinput
 import sys
 
-index_words = list()
-excluded = list()
-input_lines = list()
-input_lowercase = list()
-output_lines = list()
-
+# formatting pad values
 BEGINNING_COL = 10
 CENTRE_COL = 30
 ENDING_COL = 60 
@@ -46,7 +41,7 @@ def print_input():
 
 # Prints the fully indexed list of words with the formatting specified in 
 # a2_writeup.pdf
-def print_output():
+def print_output(output_lines):
     
     for entry in output_lines:
         line = entry[0]
@@ -56,11 +51,11 @@ def print_output():
         index_word = li[ind]
 
         pre_buffer = ""
-        max_pre_len = (CENTRE_COL-1) - BEGINNING_COL 
+        max_pre_len = (CENTRE_COL) - BEGINNING_COL 
         post_buffer = ""
-        max_post_len = ENDING_COL - (CENTRE_COL + len(index_word))
+        max_post_len = ENDING_COL - (CENTRE_COL + len(index_word) -1)
 
-        # create pre_buffer - word + " "
+        # create pre_buffer
         pre_words = li[:ind]
         for w in pre_words[::-1]:
             if len(w) + 1 + len(pre_buffer) > max_pre_len:
@@ -70,7 +65,7 @@ def print_output():
         # pad to centre
         pre_buffer = " "*(CENTRE_COL-1 - len(pre_buffer)) + pre_buffer
 
-        #create post_buffer - " " + word
+        #create post_buffer
         post_words = li[ind+1:]
         for w in post_words:
             if len(post_buffer) + 1 + len(w) > max_post_len:
@@ -84,7 +79,9 @@ def print_output():
 
 # Fills the output_lines list with the indexed compliment of input_lines,
 # paired with the list-index of the index_word used 
-def index():
+def index(index_words, excluded, input_lines, input_lowercase, 
+        output_lines):
+    
     for word in index_words:
         for i in range(len(input_lines)):
 
@@ -115,7 +112,7 @@ def index():
 # Fills and the list of excluded words
 #
 # Fills and sorts (lexicographically) the list of index words
-def get_input():
+def get_input(index_words, excluded, input_lines, input_lowercase):
     version = input()
     seperator = input()
 
@@ -142,7 +139,7 @@ def get_input():
                     index_words.append(w.lower())  
 
         else:
-            # still getting excluded words
+            # still getting excluded words as input
             excluded.append(line.lower())
 
         index_words.sort()
@@ -151,9 +148,15 @@ def get_input():
 
 
 def main():
-    get_input()
-    index()
-    print_output()
+    index_words = list()
+    excluded = list()
+    input_lines = list()
+    input_lowercase = list()
+    output_lines = list()
+
+    get_input(index_words, excluded, input_lines, input_lowercase)
+    index(index_words, excluded, input_lines, input_lowercase,output_lines)
+    print_output(output_lines)
 
 if __name__ == '__main__':
     main()
