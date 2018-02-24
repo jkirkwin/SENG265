@@ -1,4 +1,4 @@
-# Add shebang path
+#!/bin/usr/env python3
 
 # Jamie Kirkwin
 # Seng 265 Assignment 2
@@ -15,6 +15,10 @@ excluded = list()
 input_lines = list()
 input_lowercase = list()
 output_lines = list()
+
+BEGINNING_COL = 10
+CENTRE_COL = 30
+ENDING_COL = 60 
 
 
 # for debugging
@@ -49,39 +53,31 @@ def print_output():
         ind = entry[1]
 
         li = line.split()
+        index_word = li[ind]
 
-        # the capitalized word to begin at column 30 is at li[ind]
-        buffer = li[ind] + " "
+        pre_buffer = ""
+        max_pre_len = (CENTRE_COL-1) - BEGINNING_COL 
+        post_buffer = ""
+        max_post_len = ENDING_COL - (CENTRE_COL + len(index_word))
 
-        # add words following index word
-        for word in li[ind+1:]:
-            if len(buffer) + len(word) > 30:
+        # create pre_buffer - word + " "
+        pre_words = li[:ind]
+        for w in pre_words[::-1]:
+            if len(w) + 1 + len(pre_buffer) > max_pre_len:
                 break
-            buffer = buffer + word + " "
+            pre_buffer = w + " " + pre_buffer                
 
-        # pad to 30 characters
-        buffer = buffer + " " * (30-len(buffer))
+        # pad to centre
+        pre_buffer = " "*(CENTRE_COL-1 - len(pre_buffer)) + pre_buffer
 
-        # add words preceding index word
-        buffer = buffer + " " 
-        for word in li[:ind][::-1]: # does not work for index = 0
-            if len(buffer) + len(word) > 50:
+        #create post_buffer - " " + word
+        post_words = li[ind+1:]
+        for w in post_words:
+            if len(post_buffer) + 1 + len(w) > max_post_len:
                 break
-            buffer = word + " " + buffer
+            post_buffer = post_buffer + " " + w
 
-        # pad to centre at column 30
-        buffer = " "*(60 -len(buffer))  + buffer
-
-        # remove trailing spaces
-        trail = 0
-        for c in buffer[::-1]:
-            if c != " ":
-                break
-            trail = trail +1
-        buffer = buffer[:len(buffer) - trail]
-
-        print(len(buffer))
-        print(buffer)
+        print(pre_buffer + index_word + post_buffer)
 
     return
 
@@ -99,9 +95,10 @@ def index():
             raw_li = raw_line.split()
 
             if word in low_li:
-                # capitalize index word
+                # record index of indexint word
                 index = low_li.index(word)
                 
+                #capitalize indexing word
                 raw_li[index] = raw_li[index].upper()
                 
                 # package the indexed line with the value of the index
