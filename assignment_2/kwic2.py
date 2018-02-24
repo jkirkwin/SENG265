@@ -4,7 +4,7 @@
 # Seng 265 Assignment 2
 # V00875987
 # kwic2.c
-# Feb 23, 2018
+# Feb 24, 2018
 # Intro to Python, indexing a text file by keyword with basic formatting
 
 import fileinput
@@ -16,11 +16,13 @@ input_lines = list()
 input_lowercase = list()
 output_lines = list()
 
+
 # for debugging
 # stackoverflow.com/questions/12214801/print-a-string-as-hex-bytes
 def print_hex(l):
     for s in l:
         print(":".join("{:02x}".format(ord(c)) for c in s))
+
 
 # for debugging
 def print_lines(l):
@@ -41,17 +43,46 @@ def print_input():
 # Prints the fully indexed list of words with the formatting specified in 
 # a2_writeup.pdf
 def print_output():
+    
+    for entry in output_lines:
+        line = entry[0]
+        ind = entry[1]
+
+        li = line.split()
+
+        # the capitalized word to begin at column 30 is at li[ind]
+        buffer = li[ind] + " "
+
+        # add words following index word
+        for word in li[ind+1:]:
+            if len(buffer) + len(word) > 30:
+                break
+            buffer = buffer + word + " "
+
+        # pad to 30 characters
+        buffer = buffer + " " * (30-len(buffer))
+
+        # add words preceding index word
+        buffer = buffer + " " 
+        for word in li[:ind][::-1]: # does not work for index = 0
+            if len(buffer) + len(word) > 50:
+                break
+            buffer = word + " " + buffer
+
+        # pad to centre at column 30
+        buffer = " "*(60 -len(buffer))  + buffer
+
+        print(buffer)
 
     return
 
 
-# Fills the output_lines list with the indexed compliment of input_lines
-# according to the content of the lists of excluded and index words 
+# Fills the output_lines list with the indexed compliment of input_lines,
+# paired with the list-index of the index_word used 
 def index():
-
     for word in index_words:
         for i in range(len(input_lines)):
-            
+
             raw_line = input_lines[i]
             lower_line = input_lowercase[i]
             
@@ -117,8 +148,6 @@ def main():
     get_input()
     index()
     print_output()
-
-    print_lines(output_lines)
 
 if __name__ == '__main__':
     main()
