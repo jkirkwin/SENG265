@@ -20,9 +20,10 @@ class Kwic:
     centre = 30
     end = 60
 
+
     def _get_index_words(self):
         '''Creates a list of all non-excluded words'''
-        
+
         index_words = []
         for line in self.raw_lines:
             for word in line.split():
@@ -34,27 +35,46 @@ class Kwic:
         return index_words
 
 
+    def _get_lower_lines(self):
+        lower_lines = []
+        for x in self.raw_lines:
+            lower_lines.append(x.lower())
+        return lower_lines
+
+
     def __init__(self, excluded, lines):
         self.excluded = excluded
         self.raw_lines = lines
         self.index_words = self._get_index_words()
+        self.lower_lines = self._get_lower_lines()
 
 
     def _index(self):
         '''creates the list of lines to be formatted, each paired with the 
         index of the word to index by (indexing should be on the list gotten
         from lines.split()'''
-        
         lines = []
-        for ind_word in self.index_words:
-            for line in self.raw_lines:
-                line = line.lower() 
-                li = line.split()
-                if ind_word in li:
-                    index = li.index(ind_word)
-                    li[index] = li[index].upper()
 
-                    lines.append( (" ".join(li), index) )
+        for word in self.index_words:
+            for i in range(len(self.raw_lines)):
+
+                raw_line = self.raw_lines[i]
+                lower_line = self.lower_lines[i]
+                
+                low_li = lower_line.split()
+                raw_li = raw_line.split()
+
+                if word in low_li:
+                    # record index of indexint word
+                    index = low_li.index(word)
+                    
+                    #capitalize indexing word
+                    raw_li[index] = raw_li[index].upper()
+                    
+                    # package the indexed line with the value of the index
+                    # which gives the index word when the string is split 
+                    s = " ".join(raw_li)
+                    lines.append((s, index))
         return lines
 
 
