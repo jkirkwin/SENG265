@@ -26,6 +26,7 @@ class Kwic:
         index_words = []
         for line in self.raw_lines:
             for word in line.split():
+                word = word.lower()
                 if word not in (self.excluded + index_words):
                     index_words.append(word) 
 
@@ -47,6 +48,7 @@ class Kwic:
         lines = []
         for ind_word in self.index_words:
             for line in self.raw_lines:
+                line = line.lower() 
                 li = line.split()
                 if ind_word in li:
                     index = li.index(ind_word)
