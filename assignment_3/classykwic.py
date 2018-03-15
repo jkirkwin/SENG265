@@ -20,7 +20,7 @@ class Kwic:
     centre = 30
     end = 60
 
-    def get_index_words(self):
+    def _get_index_words(self):
         '''Creates a list of all non-excluded words'''
         
         index_words = []
@@ -29,19 +29,21 @@ class Kwic:
                 if word not in (self.excluded + index_words):
                     index_words.append(word) 
 
+        index_words.sort()
         return index_words
 
 
     def __init__(self, excluded, lines):
         self.excluded = excluded
         self.raw_lines = lines
-        self.index_words = self.get_index_words()
+        self.index_words = self._get_index_words()
 
 
-    def output(self):
-        '''returns fully indexed and formatted list of lines'''
+    def _index(self):
+        '''creates the list of lines to be formatted, each paired with the 
+        index of the word to index by (indexing should be on the list gotten
+        from lines.split()'''
         
-        # create the list of lines to be formatted
         lines = []
         for ind_word in self.index_words:
             for line in self.raw_lines:
@@ -51,8 +53,14 @@ class Kwic:
                     li[index] = li[index].upper()
 
                     lines.append( (" ".join(li), index) )
+        return lines
 
-        # use lines[] to create a fully formatted list
+
+    def output(self):
+        '''returns fully indexed and formatted list of lines'''
+        
+        lines = self._index()
+
         output = []
 
         for entry in lines:
