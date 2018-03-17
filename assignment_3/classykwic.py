@@ -4,7 +4,7 @@
 Jamie Kirkwin
 Seng 265 Assignment 3
 classykwic.py
-March 13, 2018
+March 15, 2018
 
 Refactor kwic2 using regular expressions and a Kwic class
 
@@ -12,6 +12,7 @@ The program using this class is kwic3.py
 '''
 
 import sys
+import re
 
 class Kwic:
 
@@ -22,10 +23,11 @@ class Kwic:
 
 
     def _get_index_words(self):
-        '''Creates a list of all non-excluded words'''
+        '''Creates and returns a list of all non-excluded words'''
 
         index_words = []
         for line in self.raw_lines:
+            
             for word in line.split():
                 word = word.lower()
                 if word not in (self.excluded + index_words):
@@ -35,85 +37,43 @@ class Kwic:
         return index_words
 
 
-    def _get_lower_lines(self):
-        lower_lines = []
-        for x in self.raw_lines:
-            lower_lines.append(x.lower())
-        return lower_lines
-
-
     def __init__(self, excluded, lines):
         self.excluded = excluded
         self.raw_lines = lines
         self.index_words = self._get_index_words()
-        self.lower_lines = self._get_lower_lines()
-
-
-    def _index(self):
-        '''creates the list of lines to be formatted, each paired with the 
-        index of the word to index by (indexing should be on the list gotten
-        from lines.split()'''
-        lines = []
-
-        for word in self.index_words:
-            for i in range(len(self.raw_lines)):
-
-                raw_line = self.raw_lines[i]
-                lower_line = self.lower_lines[i]
-                
-                low_li = lower_line.split()
-                raw_li = raw_line.split()
-
-                if word in low_li:
-                    # record index of indexint word
-                    index = low_li.index(word)
-                    
-                    #capitalize indexing word
-                    raw_li[index] = raw_li[index].upper()
-                    
-                    # package the indexed line with the value of the index
-                    # which gives the index word when the string is split 
-                    s = " ".join(raw_li)
-                    lines.append((s, index))
-        return lines
 
 
     def output(self):
-        '''returns fully indexed and formatted list of lines'''
-        
-        lines = self._index()
-
         output = []
 
-        for entry in lines:
-            line = entry[0]
-            ind = entry[1]
+        for word in self.index_words:
 
-            li = line.split()
-            index_word = li[ind]
+            # Matches any line containing the current index word
+            pattobj = re.compile(r'^.*\b'+word+r'\b.*$', re.IGNORECASE)
 
-            pre_buffer = ""
-            max_pre_len = Kwic.centre - Kwic.start 
-            post_buffer = ""
-            max_post_len = Kwic.end - (Kwic.centre + len(index_word) -1)
+            for line in self.raw_lines:
+                matchobj = pattobj.search(line)
 
-            # create pre_buffer
-            pre_words = li[:ind]
-            for w in pre_words[::-1]:
-                if len(w) + 1 + len(pre_buffer) > max_pre_len:
-                    break
-                pre_buffer = w + " " + pre_buffer                
+                if(matchobj):
+                    # capitalize the index word occurances
+                    output_line = re.sub(word, word.upper(), line)
 
-            # pad to centre
-            pre_buffer = " "*(Kwic.centre-1 - len(pre_buffer)) + pre_buffer
-
-            #create post_buffer
-            post_words = li[ind+1:]
-            for w in post_words:
-                if len(post_buffer) + 1 + len(w) > max_post_len:
-                    break
-                post_buffer = post_buffer + " " + w
-
-            output.append(pre_buffer+index_word+post_buffer)
+                    output.append(self._format(output_line, word))
 
         return output
+
+
+    def _format(self, output_line, index_word):
+        ''' returns a formatted version of the line passed in'''
+        pre_max = self.centre - self.start
+        post_max = self.end - self.centre - len(index_word)
+
+        pattern = r'((?<=\b).{0,' +str(pre_max)+ '})' +index_word+ '(.{0,' +str(post_max)+ r'}(?=\b))'
+
+        matchobj = re.search(pattern, output_line, re.IGNORECASE)
+
+        # group 1 gives the sub string preceding the index word 
+        # that will be included in the output
+        f_line = " " * (self.centre - len(matchobj.group(1))) + matchobj.group(0)
+
+        return f_line
