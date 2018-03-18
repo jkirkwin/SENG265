@@ -68,12 +68,13 @@ class Kwic:
         pre_max = self.centre - self.start
         post_max = self.end - self.centre - len(index_word)
 
-        pattern = r'((?<=\b).{0,' +str(pre_max)+ '})' +index_word+ '(.{0,' +str(post_max)+ r'}(?=\b))'
+        pattern = r'(?<=\b) *(.{0,' +str(pre_max)+ '})' +index_word+ r'(.{0,' +str(post_max)+ r'})(?=\b)'
 
         matchobj = re.search(pattern, output_line, re.IGNORECASE)
 
-        # group 1 gives the sub string preceding the index word 
-        # that will be included in the output
-        f_line = " " * (self.centre - len(matchobj.group(1))) + matchobj.group(0)
+        f_line = matchobj.group(0).strip()
 
-        return f_line
+        pad = self.centre - 1 - len(matchobj.group(1))
+        print("pad = {}".format(pad))
+
+        return pad * " " + f_line
