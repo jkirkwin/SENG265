@@ -4,11 +4,11 @@
 Jamie Kirkwin
 Seng 265 Assignment 3
 classykwic.py
-March 15, 2018
+March 17, 2018
 
 Refactor kwic2 using regular expressions and a Kwic class
 
-The program using this class is kwic3.py
+The script using this module is kwic3.py
 '''
 
 import sys
@@ -44,6 +44,7 @@ class Kwic:
 
 
     def output(self):
+        '''returns a list of the indexed and formatted lines'''
         output = []
 
         for word in self.index_words:
@@ -55,26 +56,27 @@ class Kwic:
                 matchobj = pattobj.search(line)
 
                 if(matchobj):
-                    # capitalize the index word occurances
-                    output_line = re.sub(word, word.upper(), line)
-
+                    # capitalize the index word occurances 
+                    output_line = re.sub(r'\b' +word+ r'\b', word.upper(), \
+                            line, flags = re.IGNORECASE)
+                    
+                    # add the formatted line to output
                     output.append(self._format(output_line, word))
-
+                    
         return output
 
 
     def _format(self, output_line, index_word):
         ''' returns a formatted version of the line passed in'''
+        
         pre_max = self.centre - self.start
-        post_max = self.end - self.centre - len(index_word)
+        post_max = self.end +1 - self.centre - len(index_word)
 
-        pattern = r'(?<=\b) *(.{0,' +str(pre_max)+ '})' +index_word+ r'(.{0,' +str(post_max)+ r'})(?=\b)'
-
+        # extract only the words which will fit in our formatting space
+        pattern = r'(?<=\b) *(.{0,' +str(pre_max)+ r'})\b' +index_word+ \
+                r'\b(.{0,' +str(post_max)+ r'})(?=\b)'
         matchobj = re.search(pattern, output_line, re.IGNORECASE)
-
         f_line = matchobj.group(0).strip()
 
         pad = self.centre - 1 - len(matchobj.group(1))
-        print("pad = {}".format(pad))
-
         return pad * " " + f_line
