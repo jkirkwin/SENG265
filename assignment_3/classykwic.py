@@ -73,8 +73,8 @@ class Kwic:
         post_max = self.end +1 - self.centre - len(index_word)
 
         # extract only the words which will fit in our formatting space
-        pattern = r'(?<=\b) *(.{0,' +str(pre_max)+ r'})\b' +index_word+ \
-                r'\b(.{0,' +str(post_max)+ r'})(?=\b)'
+        pattern = r'\b *(.{0,' +str(pre_max)+ r'})\b' +index_word+ \
+                r'\b(.{0,' +str(post_max)+ r'})\b'
         matchobj = re.search(pattern, output_line, re.IGNORECASE)
         f_line = matchobj.group(0).strip()
 
